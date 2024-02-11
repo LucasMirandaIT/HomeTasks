@@ -27,7 +27,7 @@ export const useTasksStore = defineStore('tasks', () => {
 
   async function addTask(item: Task) {
     try {
-      const { data } = await useFetch("/api/task", {
+      const { data } = await useFetch("/api/tasks", {
         method: "POST",
         body: item,
       });

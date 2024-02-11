@@ -23,7 +23,7 @@ const calendarOptions = ref({
     center: 'title',
     right: 'next',
   },
-  events: eventsList,
+  events: eventsList.value || [],
   locale: ptBRLocale,
   contentHeight: '60vh',
   plugins: [interactionPlugin, dayGridPlugin],
@@ -71,6 +71,12 @@ const modalData = ref<any>({});
 
 const closeModal = () => {
   modalOpened.value = false;
+};
+
+const firstTask = () => {
+  const today = new Date();
+  modalOpened.value = true;
+  modalData.value = { ...modalData.value, selectedDate: today };
 };
 
 watch(() => eventsList, () => {
@@ -121,10 +127,14 @@ onMounted(async () => {
 <template>
   <h1>Calendar</h1>
 
-<h2>{{ eventsList.length }}</h2>
-
 <template v-if="eventsList.length > 0">
     <FullCalendar :options="calendarOptions" />
+</template>
+<template v-else>
+  <p>
+  Você ainda não possui tarefas cadastradas.
+  </p>
+  <button @click="firstTask()">Cadastre a primeira</button>
 </template>
 
   <BaseModal
