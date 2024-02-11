@@ -1,6 +1,6 @@
 
 <template>
-  <div>
+  <div ref="inputField">
     <label :for="id">{{ label }}</label>
     <input
       :id="id"
@@ -8,7 +8,6 @@
       v-bind="attrs"
       :type="type"
       :placeholder="placeholder"
-      ref="inputField"
       @input="handleInput"
     />
   </div>
@@ -57,7 +56,7 @@ label {
   margin-bottom: 4px;
 }
 input {
-  /* width: 100%; */
+  width: 100%;
   padding: 8px;
   box-sizing: border-box;
 }

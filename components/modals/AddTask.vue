@@ -4,7 +4,7 @@
     <Select
       name="roomName"
       v-model="form.room"
-      width="50%"
+      :width="isMobile ? '100%' : '50%'"
     >
       <option
         :value="room._id"
@@ -22,7 +22,7 @@
       v-if="props.mode === 'creatingEvent'"
       name="name"
       v-model="form.name"
-      width="50%"
+      :width="isMobile ? '100%' : '50%'"
     >
       <option
         selected
@@ -43,7 +43,7 @@
       v-else-if="props.mode === 'addTask'"
       name="roomName"
       v-model="form.name"
-      width="50%"
+      :width="isMobile ? '100%' : '50%'"
     />
   </div>
 
@@ -53,7 +53,7 @@
       v-if="props.mode === 'addTask'"
       name="roomName"
       v-model="form.description"
-      width="50%"
+      :width="isMobile ? '100%' : '50%'"
     />
     <p v-else>
       {{ form.description }}
@@ -65,7 +65,7 @@
     <Select
       name="owner"
       v-model="form.owner"
-      width="50%"
+      :width="isMobile ? '100%' : '50%'"
     >
       <option
         :value="owner._id"
@@ -89,13 +89,12 @@
   </div>
   <div v-else-if="props.mode === 'addTask'">
     <label for="ruleText">Regras específicas</label>
-    <div>
+    <div class="rule-container">
       <Input
-      name="ruleText"
-      v-model="ruleText"
-      width="50%"
-    />
-      <button @click="addRule">Adicionar</button>
+        name="ruleText"
+        v-model="ruleText"
+      />
+      <button class="add-rule-button" @click="addRule">Adicionar</button>
     </div>
 
     <ul>
@@ -110,13 +109,13 @@
     <label for="observations">Observações</label>
     <div>
       <Textarea
-        width="50%"
+        :width="isMobile ? '100%' : '50%'"
         v-model="form.observations"
       />
     </div>
   </div>
 
-  <Button @click="saveTask">Salvar tarefa</Button>
+  <Button :width="isMobile ? '100%' : '50%'" @click="saveTask">Salvar tarefa</Button>
 </template>
 
 <script setup>
@@ -135,6 +134,7 @@ const taskStore = useTasksStore();
 const usersStore = useUsersStore();
 const snackbar = useSnackbarStore();
 
+const isMobile = computed(() => window.innerWidth < 768);
 const roomsList = computed(() => roomStore.rooms);
 const owners = computed(() => usersStore.users);
 const props = defineProps({
@@ -258,5 +258,22 @@ label,
 .rules-title {
   font-size: 18px;
   font-weight: bold;
+}
+
+.rule-container {
+  display: grid;
+  grid-template-columns: 4fr 1fr;
+  gap: 4px;
+}
+
+.add-rule-button {
+  margin-top: 4px;
+  height: 35px;
+}
+
+@media screen and (min-width: 768px) {
+  .rule-container {
+    width: 50%;
+  }
 }
 </style>

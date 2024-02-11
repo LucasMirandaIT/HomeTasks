@@ -6,7 +6,7 @@
     <Input
       name="roomName"
       v-model="form.name"
-      width="50%"
+      :width="isMobile ? '100%' : '50%'"
     />
   </div>
 
@@ -17,11 +17,11 @@
       type="checkbox"
       name="commonArea"
       v-model="form.commonArea"
-      width="50%"
+      :width="isMobile ? '100%' : '50%'"
     />
   </div>
 
-  <button :onclick="saveRoom">Salvar cômodo</button>
+  <Button :width="isMobile ? '100%' : '50%'" :onclick="saveRoom">Salvar cômodo</Button>
 </template>
 
 <script setup>
@@ -29,9 +29,12 @@ import { ref, defineEmits, watch } from "vue";
 import { useRoomsStore } from "@/stores/rooms";
 import { useSnackbarStore } from "@/stores/snackbar";
 import Input from '@/components/forms/Input.vue';
+import Button from "../layout/Button.vue";
 
 const { addRoom } = useRoomsStore();
 const snackbar = useSnackbarStore();
+
+const isMobile = computed(() => window.innerWidth < 768);
 
 const emit = defineEmits(["close"]);
 

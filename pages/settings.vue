@@ -130,7 +130,20 @@ watch(() => selectedRoom.value, () => {
 
 .lists {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+}
+
+@media screen and (min-width: 768px) {
+  .lists {
+    grid-template-columns: 1fr 1fr;
+  }
+  .users-list {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    li {
+      width: 40%;
+    }
+  }
 }
 
 .rooms-list {
@@ -143,11 +156,17 @@ watch(() => selectedRoom.value, () => {
 }
 
 .users-list {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
   li {
-    width: 40%;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    &:not(:last-child) {
+      margin-bottom: 16px;
+    }
   }
+}
+
+ul {
+  list-style: none;
 }
 </style>

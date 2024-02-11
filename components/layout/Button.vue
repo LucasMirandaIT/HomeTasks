@@ -1,10 +1,24 @@
 <template>
-  <button class="custom-button">
+  <button class="custom-button" ref="buttonRef">
     <slot></slot>
   </button>
 </template>
 
 <script setup>
+import { ref } from 'vue';
+
+const buttonRef = ref(null);
+
+const props = defineProps({
+  width: {
+    type: String,
+    required: false
+  },
+});
+
+onMounted(() => {
+    buttonRef.value.style.width = props.width ?? '100%';
+});
 </script>
 
 <style scoped lang="scss">
