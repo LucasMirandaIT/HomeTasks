@@ -125,8 +125,6 @@ onMounted(async () => {
 </style>
 
 <template>
-  <h1>Calendar</h1>
-
 <template v-if="eventsList.length > 0">
     <FullCalendar :options="calendarOptions" />
 </template>

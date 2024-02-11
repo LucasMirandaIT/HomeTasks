@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 interface Task {
@@ -10,6 +10,7 @@ interface Task {
 
 export const useTasksStore = defineStore('tasks', () => {
   const tasks = ref<Task[]>([]);
+  const tasksByRoom = ref<Task[]>([]);
 
   async function fetchTasks() {
     const { data } = await useFetch("/api/tasks", {
@@ -19,10 +20,11 @@ export const useTasksStore = defineStore('tasks', () => {
   }
 
   async function fetchTasksByRoom(roomName: string) {
+    tasksByRoom.value = [];
     const { data } = await useFetch(`/api/tasks/${roomName}`, {
       method: "GET"
     });
-    tasks.value = (data.value) as Task[];
+    tasksByRoom.value = (data.value) as Task[];
   }
 
   async function addTask(item: Task) {
@@ -38,5 +40,5 @@ export const useTasksStore = defineStore('tasks', () => {
     }
   }
 
-  return { tasks, addTask, fetchTasks, fetchTasksByRoom };
+  return { tasks, tasksByRoom, addTask, fetchTasks, fetchTasksByRoom };
 })

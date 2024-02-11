@@ -27,13 +27,13 @@
       <option
         selected
         disabled
-        v-if="taskStore.tasks.length === 0"
+        v-if="taskStore.tasksByRoom.length === 0"
       >
         Não foram encontradas tarefas para este cômodo
       </option>
       <option
         :value="task._id"
-        v-for="task in taskStore.tasks"
+        v-for="task in taskStore.tasksByRoom"
       >
         {{ task.name }}
       </option>
@@ -181,20 +181,20 @@ const addRule = () => {
   ruleText.value = '';
 };
 
-const saveTask = () => {
+const saveTask = async () => {
   try {
     if (props.mode === 'creatingEvent') {
       const body = { ...form.value, date: props.date };
       delete body.description;
       delete body.rules;
       const parsedBody = handleBodyToAddEvent(body);
-      eventStore.addEvent(parsedBody);
+      await eventStore.addEvent(parsedBody);
     } else {
-      taskStore.addTask(form.value);
+      await taskStore.addTask(form.value);
     }
 
-    resetForm();
     emit('close');
+    resetForm();
   } catch (error) {
     snackbar.addSnackbar('Erro', 'Uma tarefa com este nome já existe!', {
       timer: 4000,

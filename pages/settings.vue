@@ -1,11 +1,12 @@
 <template>
   <section>
+  <section class="lists">
     <div>
       Lista de Cômodos
       <button @click="openRoomModal">Adicionar Cômodo</button>
       <p v-if="roomsStore.loadingRooms">Loading...</p>
       <ul class="rooms-list" v-else>
-        <li v-for="room in roomsList">
+        <li :class="{active: selectedRoom === room._id}" @click="selectItem(room, 'room')" v-for="room in roomsList">
           {{ room.name }}
         </li>
       </ul>
@@ -13,12 +14,18 @@
     <div>
       Lista de Tarefas
       <button @click="openTaskModal">Adicionar Tarefa</button>
-      <ul class="tasks-list">
-        <li v-for="task in tasksList">
-          {{ task.name }}
-        </li>
-      </ul>
+      <template v-if="selectedRoom">
+        <ul class="tasks-list">
+          <li @click="selectItem(task, 'task')" v-for="task in tasksList">
+            {{ task.name }}
+          </li>
+        </ul>
+      </template>
+      <template v-else>
+        <p>Selecione um cômodo para ver as tarefas do mesmo</p>
+      </template>
     </div>
+  </section>
     <div>
       Lista de Usuários
       <button @click="openUserModal">Adicionar Usuário</button>
@@ -68,12 +75,15 @@ const tasksStore = useTasksStore();
 const usersStore = useUsersStore();
 
 const roomsList = computed(() => roomsStore.rooms);
-const tasksList = computed(() => tasksStore.tasks);
+const tasksList = computed(() => tasksStore.tasksByRoom);
 const ownersList = computed(() => usersStore.users);
 
 const isOpenedRoomModal = ref(false);
 const isOpenedTaskModal = ref(false);
 const isOpenedUserModal = ref(false);
+
+const selectedRoom = ref();
+const selectedTask = ref();
 
 const openRoomModal = () => {
   isOpenedRoomModal.value = true;
@@ -87,7 +97,12 @@ const openUserModal = () => {
   isOpenedUserModal.value = true;
 };
 
+const selectItem = ({_id}, type) => {
+  type === 'room' ? selectedRoom.value = _id : selectedTask.value = _id;
+}
+
 const closeModal = (modalType) => {
+  console.log('Caiu no Close ::: ', modalType);
   modalType === 'room' && (isOpenedRoomModal.value = false);
   modalType === 'task' && (isOpenedTaskModal.value = false);
   modalType === 'user' && (isOpenedUserModal.value = false);
@@ -95,8 +110,15 @@ const closeModal = (modalType) => {
 
 onMounted(async () => {
   await roomsStore.fetchRooms();
-  await tasksStore.fetchTasks();
   await usersStore.fetchUsers();
+});
+
+const fetchTasksByRoom = async (roomId) => {
+  await tasksStore.fetchTasksByRoom(roomId);
+};
+
+watch(() => selectedRoom.value, () => {
+  fetchTasksByRoom(selectedRoom.value);
 });
 </script>
 
@@ -106,11 +128,17 @@ onMounted(async () => {
   border-radius: 50%;
 }
 
-.rooms-list,.tasks-list {
-  display: flex;
-  flex-wrap: wrap;
+.lists {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.rooms-list {
   li {
-    width: 50%;
+    cursor: pointer;
+  }
+  .active {
+    color: blue;
   }
 }
 
