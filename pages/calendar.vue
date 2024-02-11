@@ -5,7 +5,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/vue3';
 import AddEventOnCalendar from '@/components/modals/AddEventOnCalendar.vue';
 import BaseModal from '@/components/BaseModal.vue';
-import ptBRLocale from '@fullcalendar/core/locales/pt-BR';
+import ptBRLocale from '@fullcalendar/core/locales/pt-br';
 import { Months } from '@/constants/utils';
 import { useEventsStore } from '@/stores/events';
 import { useUsersStore } from '@/stores/users';
