@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue';
-import dayGridPlugin from '@fullcalendar/dayGrid';
+import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/vue3';
 import AddEventOnCalendar from '@/components/modals/AddEventOnCalendar.vue';
