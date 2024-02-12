@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/vue3';
 import AddEventOnCalendar from '@/components/modals/AddEventOnCalendar.vue';
@@ -17,7 +18,7 @@ const eventsList = computed(() => eventStore.events);
 
 // Calendar options
 const calendarOptions = ref({
-  initialView: 'dayGridWeek',
+  initialView: window?.innerWidth < 768 ? 'dayGridDay' : 'dayGridWeek',
   headerToolbar: {
     left: 'prev',
     center: 'title',
@@ -26,7 +27,7 @@ const calendarOptions = ref({
   events: eventsList.value || [],
   locale: ptBRLocale,
   contentHeight: '60vh',
-  plugins: [interactionPlugin, dayGridPlugin],
+  plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin],
   displayEventTime: true,
   slotDuration: '01:00:00',
   selectable: true,
@@ -38,7 +39,9 @@ const calendarOptions = ref({
     const formattedEnd = `${date.end.day} de ${Months[date.end.month]} de ${
       date.end.year
     }`;
-    return formattedStart + ' - ' + formattedEnd;
+
+    const dateToShow = window?.innerWidth < 768 ? formattedStart : formattedStart + ' - ' + formattedEnd;
+    return dateToShow;
   },
   dateClick: (data: any) => {
     modalOpened.value = true;
@@ -69,7 +72,7 @@ const modalOpened = ref(false);
 
 const modalData = ref<any>({});
 
-const closeModal = () => {
+const closeModal = async () => {
   modalOpened.value = false;
 };
 
@@ -79,7 +82,7 @@ const firstTask = () => {
   modalData.value = { ...modalData.value, selectedDate: today };
 };
 
-watch(() => eventsList, () => {
+watch(() => eventsList.value, () => {
   calendarOptions.value.events = eventsList as any;
 });
 
@@ -139,7 +142,7 @@ onMounted(async () => {
     :active="modalOpened"
     @close="closeModal()"
   >
-    <AddEventOnCalendar :selectedDate="modalData.selectedDate" />
+    <AddEventOnCalendar @close="closeModal()" :selectedDate="modalData.selectedDate" />
   </BaseModal>
 </template>
 ~/stores/events

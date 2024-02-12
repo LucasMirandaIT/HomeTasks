@@ -50,7 +50,7 @@
     :active="isOpenedTaskModal"
     @close="closeModal('task')"
   >
-    <AddTask />
+    <AddTask @close="closeModal('task')" />
   </BaseModal>
   <BaseModal
     v-if="isOpenedUserModal"
@@ -101,11 +101,19 @@ const selectItem = ({_id}, type) => {
   type === 'room' ? selectedRoom.value = _id : selectedTask.value = _id;
 }
 
-const closeModal = (modalType) => {
-  console.log('Caiu no Close ::: ', modalType);
-  modalType === 'room' && (isOpenedRoomModal.value = false);
-  modalType === 'task' && (isOpenedTaskModal.value = false);
-  modalType === 'user' && (isOpenedUserModal.value = false);
+const closeModal = async (modalType) => {
+  if (modalType === 'room') {
+    isOpenedRoomModal.value = false;
+    await roomsStore.fetchRooms();
+  }
+  if (modalType === 'task') {
+    isOpenedTaskModal.value = false;
+    await fetchTasksByRoom(selectedRoom.value);
+  }
+  if (modalType === 'user') { 
+    isOpenedUserModal.value = false;
+    await usersStore.fetchUsers();
+  }
 };
 
 onMounted(async () => {

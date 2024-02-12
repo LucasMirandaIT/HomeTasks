@@ -119,7 +119,7 @@
 </template>
 
 <script setup>
-import { ref, defineEmits, computed, onMounted, watch } from 'vue';
+import { ref, defineEmits, computed, watch } from 'vue';
 import { useEventsStore } from '@/stores/events';
 import { useRoomsStore } from '@/stores/rooms';
 import { useTasksStore } from '@/stores/tasks';
@@ -134,7 +134,7 @@ const taskStore = useTasksStore();
 const usersStore = useUsersStore();
 const snackbar = useSnackbarStore();
 
-const isMobile = computed(() => window.innerWidth < 768);
+const isMobile = computed(() => window?.innerWidth < 768);
 const roomsList = computed(() => roomStore.rooms);
 const owners = computed(() => usersStore.users);
 const props = defineProps({
@@ -187,7 +187,7 @@ const saveTask = async () => {
       const body = { ...form.value, date: props.date };
       delete body.description;
       delete body.rules;
-      const parsedBody = handleBodyToAddEvent(body);
+      const parsedBody = await handleBodyToAddEvent(body);
       await eventStore.addEvent(parsedBody);
     } else {
       await taskStore.addTask(form.value);
@@ -202,11 +202,12 @@ const saveTask = async () => {
   }
 };
 
-const handleBodyToAddEvent = (body) => {
+const handleBodyToAddEvent = async (body) => {
+  await taskStore.fetchTasksByRoom(body.room);
   const parsedBody = {
     title: `${
       roomsList.value.filter((room) => room._id === body.room)[0].name
-    } - ${taskStore.tasks.filter((task) => task._id === body.name)[0].name}`,
+    } - ${taskStore.tasksByRoom.filter((task) => task._id === body.name)[0].name}`,
     allDay: true,
     start: body.date,
     extendedProps: {
@@ -237,8 +238,8 @@ watch(
       const selectedTask = taskStore.tasks.filter(
         (task) => task._id === form.value.name
       )[0];
-      form.value.description = selectedTask.description;
-      form.value.rules = selectedTask.rules;
+      form.value.description = selectedTask?.description || '';
+      form.value.rules = selectedTask?.rules || [];
     }
   }
 );

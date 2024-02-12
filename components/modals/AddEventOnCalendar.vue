@@ -1,20 +1,12 @@
 <template>
   Data selecionada: {{ formatDate(selectedDate) }}
-  <AddTask  mode="creatingEvent" :date="selectedDate"/>
+  <AddTask  mode="creatingEvent" :date="selectedDate" @close="handleClose()"/>
 </template>
 
 <script setup>
 import { defineProps, ref } from "vue";
 
-import { useRoomsStore } from "@/stores/rooms";
-import { useTasksStore } from "@/stores/tasks";
-import { useSnackbarStore } from "@/stores/snackbar";
-
 import AddTask from "@/components/modals/AddTask.vue";
-
-const roomStore = useRoomsStore();
-const taskStore = useTasksStore();
-const snackbar = useSnackbarStore();
 
 const form = ref({
   room: String,
@@ -28,8 +20,14 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(['close']);
+
 const formatDate = (date) => {
   return date?.toLocaleDateString('pt-BR')
+};
+
+const handleClose = () => {
+  emit('close');
 };
 </script>
 
